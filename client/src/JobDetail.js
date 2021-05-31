@@ -11,7 +11,6 @@ export class JobDetail extends Component {
   async componentDidMount() {
     const { jobId } = this.props.match.params;
     const job = await loadJobDetails(jobId);
-    console.log(job);
     this.setState({ job });
   }
 
