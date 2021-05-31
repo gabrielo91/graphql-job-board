@@ -81,3 +81,22 @@ export async function loadCompanyDetails(companyId) {
   const { company } = await graphQLRequest(query, variables);
   return company;
 }
+
+export async function createJob(input) {
+  const mutation = `
+      mutation CreateJob($input: CreateJobInput) {
+        job: createJob(input: $input) {
+          id
+          title
+          description
+          company {
+            name
+          }
+        }
+      }
+    `;
+
+  const variables = { input };
+  const { job } = await graphQLRequest(mutation, variables);
+  return job;
+}
