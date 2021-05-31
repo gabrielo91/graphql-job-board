@@ -20,10 +20,15 @@ app.use(
   })
 );
 
+const context = ({ req }) => {
+  return { user: req.user };
+};
+
 const typeDefs = gql(fs.readFileSync("./schema.graphql", { encoding: "utf8" }));
 const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
+  context,
 });
 
 apolloServer.applyMiddleware({ app, path: "/graphql" });

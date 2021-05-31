@@ -22,5 +22,11 @@
     "companyId": "SJV0-wdOM",
     "title": "Devops Engineer",
     "description": "we need somebody to restart the servers when they fall over"
+  },
+  {
+    "id": "H16Uz0-9d",
+    "companyId": "SJV0-wdOM",
+    "title": "Tester",
+    "description": "you must be good ay finding bugs"
   }
 ]
