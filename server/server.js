@@ -21,7 +21,7 @@ app.use(
 );
 
 const context = ({ req }) => {
-  return { user: req.user };
+  return { user: req.user && db.users.get(req.user.sub) };
 };
 
 const typeDefs = gql(fs.readFileSync("./schema.graphql", { encoding: "utf8" }));
