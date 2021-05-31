@@ -6,7 +6,21 @@ import {
 } from "apollo-boost";
 import gql from "graphql-tag";
 import { getAccessToken, isLoggedIn } from "./auth";
+
 const ENDPOINT_URL = "http://localhost:9000/graphql";
+const jobQuery = gql`
+  query JobQuery($id: ID!) {
+    job(id: $id) {
+      id
+      title
+      description
+      company {
+        id
+        name
+      }
+    }
+  }
+`;
 
 const authLink = new ApolloLink((operation, forward) => {
   if (isLoggedIn()) {
@@ -41,30 +55,17 @@ export async function loadJobs() {
 
   const {
     data: { jobs },
-  } = await client.query({ query });
+  } = await client.query({ query, fetchPolicy: "no-cache" });
 
   return jobs;
 }
 
 export async function loadJobDetails(jobId) {
-  const query = gql`
-    query JobQuery($id: ID!) {
-      job(id: $id) {
-        id
-        title
-        description
-        company {
-          id
-          name
-        }
-      }
-    }
-  `;
-
   const variables = { id: jobId };
   const {
     data: { job },
-  } = await client.query({ query, variables });
+  } = await client.query({ query: jobQuery, variables });
+
   return job;
 }
 
@@ -98,6 +99,7 @@ export async function createJob(input) {
         title
         description
         company {
+          id
           name
         }
       }
@@ -106,6 +108,17 @@ export async function createJob(input) {
 
   const {
     data: { job },
-  } = await client.mutate({ mutation, variables: { input } });
+  } = await client.mutate({
+    mutation,
+    variables: { input },
+    update: (cache, { data }) => {
+      // data is part of the mutation result
+      cache.writeQuery({
+        query: jobQuery,
+        variables: { id: data.job.id },
+        data,
+      });
+    },
+  });
   return job;
 }
